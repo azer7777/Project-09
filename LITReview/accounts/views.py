@@ -11,4 +11,4 @@ def signup(request):
             return redirect('home')  # Replace 'home' with the URL name for your home page
     else:
         form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'accounts/signup.html', {'form': form})
