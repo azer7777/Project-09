@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Feed</h1>
+  <!-- Display the feed of reviews and tickets here -->
+  {% for review in reviews %}
+    <h2>{{ review.headline }}</h2>
+    <p>Rating: {{ review.rating }}/5</p>
+    <p>{{ review.body }}</p>
+    <p>By: {{ review.user }}</p>
+    <p>Created at: {{ review.time_created }}</p>
+  {% endfor %}
+
+  {% for ticket in tickets %}
+    <h2>{{ ticket.title }}</h2>
+    <p>{{ ticket.description }}</p>
+    <p>By: {{ ticket.author }}</p>
+    <p>Created at: {{ ticket.created_at }}</p>
+  {% endfor %}
+{% endblock %}

@@ -8,7 +8,8 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Replace 'home' with the URL name for your home page
+            return redirect('feed')  # Replace 'home' with the URL name for your home page
     else:
         form = UserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
+
