@@ -1,13 +1,46 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <div id="content">
+    <header class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'feed' %}">LITReviwes</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'create_review' %}">Create Review</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'create_ticket' %}">Create Ticket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'followers' %}">Followers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'update_profile_photo' %}">Update Profile Photo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_profile' %}">User Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="container mt-4">
         {% block content %}
         {% endblock %}
     </div>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
+
+
 
