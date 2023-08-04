@@ -8,6 +8,5 @@ urlpatterns = [
     path('edit_ticket/', views.edit_ticket_view, name='edit_ticket'),
     path('feed/', views.feed_view, name='feed'),
     path('followers/', views.followers_view, name='followers'),
-    path('update_profile_photo/', views.update_profile_photo_view, name='update_profile_photo'),
     path('user_profile/', views.user_profile_view, name='user_profile'),
 ]

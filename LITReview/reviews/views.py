@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Ticket, Review, UserFollows
-from .forms import ReviewForm, TicketForm, ProfilePhotoForm
+from .forms import ReviewForm, TicketForm
+from django.db.models import F, Q
 
 @login_required
 def create_review_view(request):
@@ -55,25 +56,17 @@ def edit_ticket_view(request, ticket_id):
 
 @login_required
 def feed_view(request):
-    reviews = Review.objects.all()
-    tickets = Ticket.objects.all()
+    followed_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
+    reviews = Review.objects.filter(user__in=followed_users) | Review.objects.filter(user=request.user)
+    reviews = reviews.annotate(last_action_time=F('time_created')).order_by('-last_action_time')
+    tickets = Ticket.objects.filter(Q(author__in=followed_users) | Q(author=request.user))
+    tickets = tickets.annotate(last_action_time=F('created_at')).order_by('-last_action_time')
     return render(request, 'reviews/feed.html', {'reviews': reviews, 'tickets': tickets})
 
 @login_required
 def followers_view(request):
     followers = UserFollows.objects.filter(followed_user=request.user)
     return render(request, 'reviews/followers.html', {'followers': followers})
-
-@login_required
-def update_profile_photo_view(request):
-    if request.method == 'POST':
-        form = ProfilePhotoForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('user_profile')
-    else:
-        form = ProfilePhotoForm(instance=request.user)
-    return render(request, 'reviews/update_profile_photo.html', {'form': form})
 
 @login_required
 def user_profile_view(request):

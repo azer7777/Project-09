@@ -1,32 +1,30 @@
 {% extends 'base.html' %}
 
-{% block title %}Feed{% endblock %}
-
 {% block content %}
   <h1>Feed</h1>
   <!-- Display the feed of reviews and tickets here -->
+  
+  <!-- Display reviews -->
   {% for review in reviews %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <h2 class="card-title">{{ review.headline }}</h2>
-            <p class="card-text">Rating: {{ review.rating }}/5</p>
-            <p class="card-text">{{ review.body }}</p>
-            <p class="card-text">By: {{ review.user }}</p>
-            <p class="card-text">Created at: {{ review.time_created }}</p>
-        </div>
-    </div>
+    <h2>{{ review.headline }}</h2>
+    <p>Rating: {{ review.rating }}/5</p>
+    <p>{{ review.body }}</p>
+    <p>By: {{ review.user }}</p>
+    <p>Created at: {{ review.time_created }}</p>
   {% endfor %}
 
+  <!-- Display tickets -->
   {% for ticket in tickets %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <h2 class="card-title">{{ ticket.title }}</h2>
-            <p class="card-text">{{ ticket.description }}</p>
-            <p class="card-text">By: {{ ticket.author }}</p>
-            <p class="card-text">Created at: {{ ticket.created_at }}</p>
-        </div>
-    </div>
+    <h2>{{ ticket.title }}</h2>
+    <p>{{ ticket.description }}</p>
+    <p>By: {{ ticket.author }}</p>
+    <p>Created at: {{ ticket.created_at }}</p>
   {% endfor %}
+
+  <!-- Option to create a new post and review -->
+  <a href="{% url 'create_review' %}">Create a Review</a>
+  <a href="{% url 'create_ticket' %}">Create a Ticket</a>
 {% endblock %}
+
 
 
