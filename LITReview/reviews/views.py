@@ -31,6 +31,26 @@ def create_ticket_view(request):
     return render(request, 'reviews/create_ticket.html', {'form': form})
 
 @login_required
+def create_ticket_and_review_view(request):
+    if request.method == 'POST':
+        ticket_form = TicketForm(request.POST)
+        review_form = ReviewForm(request.POST)
+        if ticket_form.is_valid() and review_form.is_valid():
+            ticket = ticket_form.save(commit=False)
+            ticket.author = request.user
+            ticket.save()
+
+            review = review_form.save(commit=False)
+            review.user = request.user
+            review.save()
+
+            return redirect('feed')
+    else:
+        ticket_form = TicketForm()
+        review_form = ReviewForm()
+    return render(request, 'reviews/create_ticket.html', {'ticket_form': ticket_form, 'review_form': review_form})
+
+@login_required
 def edit_review_view(request, review_id):
     review = get_object_or_404(Review, id=review_id, user=request.user)
     if request.method == 'POST':
