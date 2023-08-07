@@ -1,12 +1,16 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Followers</h1>
-  <ul>
-    {% for follower in followers %}
-      <li>{{ follower }}</li>
-    {% endfor %}
-  </ul>
+  <h1>Followed Users</h1>
+  {% if followed_users %}
+    <ul>
+      {% for followed_user in followed_users %}
+        <li>{{ followed_user.username }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You are not following anyone yet.</p>
+  {% endif %}
 {% endblock %}
+
 

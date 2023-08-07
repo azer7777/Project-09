@@ -15,6 +15,9 @@ class TicketForm(forms.ModelForm):
         model = Ticket
         fields = ['title', 'description']
 
+class FollowUserForm(forms.Form):
+    followed_user = forms.CharField(label='Username')
+
 class SignUpForm(UserCreationForm):
     class Meta:
         model = User

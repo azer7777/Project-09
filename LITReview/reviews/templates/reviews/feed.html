@@ -2,28 +2,25 @@
 
 {% block content %}
   <h1>Feed</h1>
-  <!-- Display the feed of reviews and tickets here -->
-  
-  <!-- Display reviews -->
-  {% for review in reviews %}
-    <h2>{{ review.headline }}</h2>
-    <p>Rating: {{ review.rating }}/5</p>
-    <p>{{ review.body }}</p>
-    <p>By: {{ review.user }}</p>
-    <p>Created at: {{ review.time_created }}</p>
+  <!-- Display the feed of posts and reviews here -->
+  {% for item in feed %}
+    {% if item.content_type.model == 'ticket' %}
+      <h2>Ticket: {{ item.content_object.title }}</h2>
+      <p>{{ item.content_object.description }}</p>
+      <p>By: {{ item.content_object.author }}</p>
+      <p>Created at: {{ item.content_object.created_at }}</p>
+      <h2>Review: {{ item.review.headline }}</h2>
+      <p>Rating: {{ item.review.rating }}/5</p>
+      <p>{{ item.review.body }}</p>
+      <p>By: {{ item.review.user }}</p>
+      <p>Created at: {{ item.review.time_created }}</p>
+    {% elif item.content_type.model == 'post' %}
+      <h2>Post: {{ item.content_object.title }}</h2>
+      <p>{{ item.content_object.body }}</p>
+      <p>By: {{ item.content_object.user }}</p>
+      <p>Created at: {{ item.content_object.time_created }}</p>
+    {% endif %}
   {% endfor %}
-
-  <!-- Display tickets -->
-  {% for ticket in tickets %}
-    <h2>{{ ticket.title }}</h2>
-    <p>{{ ticket.description }}</p>
-    <p>By: {{ ticket.author }}</p>
-    <p>Created at: {{ ticket.created_at }}</p>
-  {% endfor %}
-
-  <!-- Option to create a new post and review -->
-  <a href="{% url 'create_review' %}">Create a Review</a>
-  <a href="{% url 'create_ticket' %}">Create a Ticket</a>
 {% endblock %}
 
 
