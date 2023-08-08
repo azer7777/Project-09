@@ -31,23 +31,17 @@ def feed_view(request):
 def create_ticket_view(request):
     if request.method == 'POST':
         ticket_form = TicketForm(request.POST)
-        review_form = ReviewForm(request.POST)
-        if ticket_form.is_valid() and review_form.is_valid():
+        if ticket_form.is_valid():
             ticket = ticket_form.save(commit=False)
             ticket.author = request.user
             ticket.save()
-
-            review = review_form.save(commit=False)
-            review.user = request.user
-            review.ticket = ticket  # Link the review to the created ticket
-            review.save()
-
-            messages.success(request, 'Ticket and review created successfully.')
+            messages.success(request, "Ticket created successfully.")
             return redirect('feed')
     else:
         ticket_form = TicketForm()
-        review_form = ReviewForm()
-    return render(request, 'reviews/create_ticket.html', {'ticket_form': ticket_form, 'review_form': review_form})
+    
+    context = {'ticket_form': ticket_form}
+    return render(request, 'reviews/create_ticket.html', context)
 
 
 @login_required
@@ -62,14 +56,17 @@ def create_ticket_and_review_view(request):
 
             review = review_form.save(commit=False)
             review.user = request.user
-            review.ticket = ticket  # Set the ticket for the review
+            review.ticket = ticket
             review.save()
 
+            messages.success(request, "Ticket and Review created successfully.")
             return redirect('feed')
     else:
         ticket_form = TicketForm()
         review_form = ReviewForm()
-    return render(request, 'reviews/create_ticket.html', {'ticket_form': ticket_form, 'review_form': review_form})
+    
+    context = {'ticket_form': ticket_form, 'review_form': review_form}
+    return render(request, 'reviews/create_ticket_and_review.html', context)
 
 
 @login_required
@@ -106,17 +103,6 @@ def edit_review_view(request, review_id):
     return render(request, 'reviews/edit_review.html', {'form': form, 'review': review})
 
 
-@login_required
-def delete_review_view(request, review_id):
-    review = get_object_or_404(Review, id=review_id, user=request.user)
-
-    if request.method == 'POST':
-        review.delete()
-        messages.success(request, "Review deleted successfully.")
-        return redirect('feed')
-
-    return render(request, 'reviews/delete_review.html', {'review': review})
-
 
 @login_required
 def edit_ticket_view(request, ticket_id):
@@ -137,13 +123,21 @@ def edit_ticket_view(request, ticket_id):
 @login_required
 def delete_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, author=request.user)
-
     if request.method == 'POST':
         ticket.delete()
         messages.success(request, "Ticket deleted successfully.")
         return redirect('feed')
-
     return render(request, 'reviews/delete_ticket.html', {'ticket': ticket})
+
+
+@login_required
+def delete_review_view(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+    if request.method == 'POST':
+        review.delete()
+        messages.success(request, "Review deleted successfully.")
+        return redirect('feed')
+    return render(request, 'reviews/delete_review.html', {'review': review})
 
 
 @login_required

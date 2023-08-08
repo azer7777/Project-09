@@ -9,6 +9,10 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['headline', 'rating', 'body']
+        labels = {
+            'headline': 'Title',
+            'body': 'Comment'
+        }
 
 class TicketForm(forms.ModelForm):
     class Meta:

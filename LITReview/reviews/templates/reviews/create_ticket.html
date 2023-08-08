@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Create Ticket</h1>
+  <h2>Create a Ticket</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <h2>Review</h2>
-    {{ review_form.as_p }}
+    {{ ticket_form.as_p }}
     <button type="submit">Create Ticket</button>
   </form>
 {% endblock %}
