@@ -1,38 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Your Feed</h2>
-  
-  <!-- Buttons to create ticket and ticket + review -->
-  <div class="create-buttons">
-    <a href="{% url 'create_ticket' %}" class="btn btn-primary">Create Ticket</a>
-    <a href="{% url 'create_ticket_and_review' %}" class="btn btn-primary">Create Review</a>
-  </div>
-  
-  <!-- Display tickets and reviews -->
+  <h1>Your Feed</h1>
+
+  <!-- Create Post and Review Form -->
+  <form method="post" class="create-form">
+    {% csrf_token %}
+    {{ ticket_form.as_p }}
+    {{ review_form.as_p }}
+    <button type="submit">Create Post and Review</button>
+  </form>
+
+  <!-- Display Feed Items -->
   <div class="feed-content">
     {% for item in feed %}
       <div class="feed-item">
-        {% if item.review %}
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-          <p class="review-content">{{ item.review.content }}</p>
-          <a href="{% url 'create_review' item.id %}" class="btn btn-primary">Add Review</a>
-          <a href="{% url 'edit_ticket' item.id %}" class="btn btn-secondary">Edit Ticket</a>
-          <a href="{% url 'delete_ticket' item.id %}" class="btn btn-danger">Delete Ticket</a>
-          <a href="{% url 'edit_review' item.review.id %}" class="btn btn-secondary">Edit Review</a>
-          <a href="{% url 'delete_review' item.review.id %}" class="btn btn-danger">Delete Review</a>
-        {% else %}
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-          <a href="{% url 'create_review' item.id %}" class="btn btn-primary">Add Review</a>
-          <a href="{% url 'edit_ticket' item.id %}" class="btn btn-secondary">Edit Ticket</a>
-          <a href="{% url 'delete_ticket' item.id %}" class="btn btn-danger">Delete Ticket</a>
-        {% endif %}
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+        <p class="item-author">By: {{ item.author }}</p>
+        
+        <!-- Add Review Form -->
+        <form method="post" class="review-form">
+          {% csrf_token %}
+          <input type="hidden" name="ticket_id" value="{{ item.id }}">
+          {{ review_form.as_p }}
+          <button type="submit">Add Review</button>
+        </form>
+        
+        <!-- Display Reviews -->
+        <ul class="review-list">
+          {% for review in item.review_set.all %}
+            <li class="review-item">
+              <p>{{ review.body }}</p>
+              <p class="review-author">By: {{ review.user }}</p>
+            </li>
+          {% endfor %}
+        </ul>
       </div>
     {% endfor %}
   </div>
 {% endblock %}
-
 
 

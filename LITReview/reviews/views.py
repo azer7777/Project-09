@@ -4,27 +4,20 @@ from django.contrib import messages
 from .models import Ticket, Review, UserFollows
 from .forms import ReviewForm, TicketForm, FollowUserForm
 from django.contrib.auth.models import User
-
+from django.db.models import Q
 
 @login_required
 def feed_view(request):
-    # Get the user's followed users
-    followed_users = UserFollows.objects.filter(follower=request.user).values_list('followed_user', flat=True)
+    user = request.user
+    followed_users = user.following.values_list('followed_user', flat=True)
+    
+    feed = Ticket.objects.filter(
+        Q(author=user) | Q(author__in=followed_users) | Q(review__user=user)
+    ).distinct().order_by('-created_at')
 
-    # Get posts and reviews of followed users
-    posts = Ticket.objects.filter(author__in=followed_users)
-    reviews = Review.objects.filter(user__in=followed_users)
+    return render(request, 'reviews/feed.html', {'feed': feed})
 
-    # Get reviews in response to the user's tickets
-    responses = Review.objects.filter(ticket__author=request.user)
 
-    # Merge posts and reviews into a single list and sort by creation time
-    feed = sorted(list(posts) + list(reviews) + list(responses), key=lambda item: item.time_created, reverse=True)
-
-    context = {
-        'feed': feed,
-    }
-    return render(request, 'reviews/feed.html', context)
 
 
 @login_required
@@ -197,7 +190,8 @@ def follow_user(request):
 @login_required
 def posts_view(request):
     user = request.user
-    posts = Ticket.objects.filter(author=user).order_by('-created_at')
+    posts = Ticket.objects.filter(author=user).prefetch_related('review_set').order_by('-created_at')
+
     return render(request, 'reviews/posts.html', {'posts': posts})
 
 

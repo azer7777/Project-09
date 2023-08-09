@@ -4,17 +4,9 @@
   <h1>Edit Review</h1>
   <form method="post">
     {% csrf_token %}
-    <!-- Add form fields for editing a review -->
-    <label for="headline">Headline:</label>
-    <input type="text" name="headline" value="{{ review.headline }}" required><br>
-
-    <label for="rating">Rating (0-5):</label>
-    <input type="number" name="rating" min="0" max="5" value="{{ review.rating }}" required><br>
-
-    <label for="body">Review:</label><br>
-    <textarea name="body" rows="4" cols="50">{{ review.body }}</textarea><br>
-
-    <button type="submit">Update Review</button>
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="{% url 'delete_review' review.id %}" class="btn btn-danger">Delete</a>
   </form>
 {% endblock %}
 

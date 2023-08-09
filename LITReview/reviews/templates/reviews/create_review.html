@@ -1,21 +1,12 @@
-<!-- reviews/templates/reviews/create_review.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Create Review</h1>
+  <h1>Create Review for "{{ ticket.title }}"</h1>
   <form method="post">
     {% csrf_token %}
-    <!-- Add form fields for creating a review -->
-    <label for="headline">Headline:</label>
-    <input type="text" name="headline" required><br>
-
-    <label for="rating">Rating (0-5):</label>
-    <input type="number" name="rating" min="0" max="5" required><br>
-
-    <label for="body">Review:</label><br>
-    <textarea name="body" rows="4" cols="50"></textarea><br>
-
-    <button type="submit">Submit Review</button>
+    {{ form.as_p }}
+    <input type="submit" value="Submit Review">
   </form>
 {% endblock %}
+
 
