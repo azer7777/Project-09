@@ -4,12 +4,10 @@
   <h1>Your Feed</h1>
 
   <!-- Create Post and Review Form -->
-  <form method="post" class="create-form">
-    {% csrf_token %}
-    {{ ticket_form.as_p }}
-    {{ review_form.as_p }}
-    <button type="submit">Create Post and Review</button>
-  </form>
+  <div class="create-buttons">
+    <a href="{% url 'create_ticket' %}" class="btn btn-primary">Create Ticket</a>
+    <a href="{% url 'create_ticket_and_review' %}" class="btn btn-primary">Create Review</a>
+  </div>
 
   <!-- Display Feed Items -->
   <div class="feed-content">
@@ -17,25 +15,26 @@
       <div class="feed-item">
         <h3>{{ item.title }}</h3>
         <p>{{ item.description }}</p>
-        <p class="item-author">By: {{ item.author }}</p>
-        
-        <!-- Add Review Form -->
-        <form method="post" class="review-form">
-          {% csrf_token %}
-          <input type="hidden" name="ticket_id" value="{{ item.id }}">
-          {{ review_form.as_p }}
-          <button type="submit">Add Review</button>
-        </form>
-        
+        <p class="item-author">By: {{ item.author }} at: {{ item.created_at }}</p>
+               
         <!-- Display Reviews -->
+        {% if item.review_set.exists %}
+        <h3>Reviews:</h3>
         <ul class="review-list">
           {% for review in item.review_set.all %}
             <li class="review-item">
-              <p>{{ review.body }}</p>
-              <p class="review-author">By: {{ review.user }}</p>
+              <strong class="review-headline">{{ review.headline }} - {{ review.rating }} stars</strong>
+              <p class="review-body">{{ review.body }}</p>
+              <p class="review-author">By: {{ review.user }} at: {{ review.time_created }}</p>
             </li>
           {% endfor %}
         </ul>
+        {% else %}
+        <p class="no-review">No review available.</p>
+      {% endif %}
+      {% if not item.review_set.exists %}
+      <a href="{% url 'create_review' ticket_id=item.id %}" class="create-review-link">Add Review</a>
+      {% endif %}
       </div>
     {% endfor %}
   </div>

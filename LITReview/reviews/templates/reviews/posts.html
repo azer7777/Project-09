@@ -7,10 +7,10 @@
       <ul class="post-list">
         {% for post in posts %}
           <li class="post-box">
+            <h3>Ticket:</h3>
             <h2>{{ post.title }}</h2>
             <p class="post-description">{{ post.description }}</p>
-            <p class="post-created-at">Created at: {{ post.created_at }}</p>
-            <p class="post-author">By: {{ post.author }}</p>
+            <p class="post-author">By: {{ post.author }} at: {{ post.created_at }}</p>
             <div class="reviews-box">
               {% if post.review_set.exists %}
                 <h3>Reviews:</h3>
@@ -19,6 +19,7 @@
                     <li class="review-box">
                       <strong class="review-headline">{{ review.headline }} - {{ review.rating }} stars</strong>
                       <p class="review-body">{{ review.body }}</p>
+                      <p class="review-author">By: {{ review.user }} at: {{ review.time_created }}</p>
                       <a href="{% url 'edit_review' review_id=review.id %}" class="edit-link">Edit Review</a>
                     </li>
                   {% endfor %}
@@ -29,7 +30,7 @@
             </div>
             <a href="{% url 'edit_ticket' post.id %}" class="edit-link">Edit Ticket</a>
             {% if not post.review_set.exists %}
-              <a href="{% url 'create_review' ticket_id=post.id %}" class="create-review-link">Create Review</a>
+              <a href="{% url 'create_review' ticket_id=post.id %}" class="create-review-link">Add Review</a>
             {% endif %}
           </li>
         {% endfor %}
