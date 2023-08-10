@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Followed Users</h1>
-  {% if followed_users %}
-    <ul>
-      {% for followed_user in followed_users %}
-        <li>{{ followed_user.username }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>You are not following anyone yet.</p>
-  {% endif %}
+  <h1>Your Followers</h1>
+  <ul>
+    {% for user in followed_users %}
+      <li>
+        {{ user.username }}
+        <a href="{% url 'unfollow_user' user_id=user.id %}" class="edit-link">Unfollow</a>
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}
+
 
 

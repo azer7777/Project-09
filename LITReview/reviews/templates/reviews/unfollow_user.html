@@ -6,7 +6,7 @@
     <div class="col-md-6">
       <div class="card mt-5">
         <div class="card-header">
-          <h2>Follow User</h2>
+          <h2>Unfollow User</h2>
         </div>
         <div class="card-body">
           {% if messages %}
@@ -19,7 +19,7 @@
           <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Follow</button>
+            <button type="submit" class="btn btn-danger">Unfollow</button>
           </form>
         </div>
       </div>
@@ -27,5 +27,3 @@
   </div>
 </div>
 {% endblock %}
-
-

@@ -3,4 +3,5 @@
 {% block content %}
   <h1>User Profile</h1>
   <p>Username: {{ user.username }}</p>
+  <a href="{% url 'delete_ticket' ticket.id %}" class="btn btn-danger">Delete</a>
 {% endblock %}
