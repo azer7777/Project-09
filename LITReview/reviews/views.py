@@ -89,7 +89,7 @@ def edit_review_view(request, review_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Review updated successfully.")
-            return redirect('feed')
+            return redirect('posts')
     else:
         form = ReviewForm(instance=review)
 
@@ -106,7 +106,7 @@ def edit_ticket_view(request, ticket_id):
         if form.is_valid():
             form.save()
             messages.success(request, "Ticket updated successfully.")
-            return redirect('feed')
+            return redirect('posts')
     else:
         form = TicketForm(instance=ticket)
 
@@ -119,7 +119,7 @@ def delete_ticket_view(request, ticket_id):
     if request.method == 'POST':
         ticket.delete()
         messages.success(request, "Ticket deleted successfully.")
-        return redirect('feed')
+        return redirect('posts')
     return render(request, 'reviews/delete_ticket.html', {'ticket': ticket})
 
 
@@ -129,39 +129,8 @@ def delete_review_view(request, review_id):
     if request.method == 'POST':
         review.delete()
         messages.success(request, "Review deleted successfully.")
-        return redirect('feed')
+        return redirect('posts')
     return render(request, 'reviews/delete_review.html', {'review': review})
-
-
-@login_required
-def follow_user(request):
-    if request.method == 'POST':
-        followed_username = request.POST.get('followed_user')
-        try:
-            followed_user = User.objects.get(username=followed_username)
-            if followed_user == request.user:
-                messages.warning(request, "You cannot follow yourself.")
-            else:
-                _, created = UserFollows.objects.get_or_create(follower=request.user, followed_user=followed_user)
-                if created:
-                    messages.success(request, f"You are now following {followed_user.username}.")
-                else:
-                    messages.info(request, f"You are already following {followed_user.username}.")
-        except User.DoesNotExist:
-            messages.error(request, f"The user '{followed_username}' does not exist.")
-    return redirect('feed')
-
-
-@login_required
-def unfollow_user(request, user_id):
-    followed_user = get_object_or_404(User, id=user_id)
-    try:
-        follow_relationship = UserFollows.objects.get(follower=request.user, followed_user=followed_user)
-        follow_relationship.delete()
-        messages.success(request, f"You have unfollowed {followed_user.username}.")
-    except UserFollows.DoesNotExist:
-        messages.error(request, f"You are not following {followed_user.username}.")
-    return redirect('followers')
 
 
 @login_required
@@ -186,6 +155,31 @@ def follow_user(request):
         form = FollowUserForm()
     return render(request, 'reviews/follow_user.html', {'form': form})
 
+@login_required
+def unfollow_user(request, user_id):
+    followed_user = get_object_or_404(User, id=user_id)
+    try:
+        follow_relationship = UserFollows.objects.get(follower=request.user, followed_user=followed_user)
+        follow_relationship.delete()
+        messages.success(request, f"You have unfollowed {followed_user.username}.")
+    except UserFollows.DoesNotExist:
+        messages.error(request, f"You are not following {followed_user.username}.")
+    return redirect('followers')
+
+
+@login_required
+def followers_view(request):
+    followed_users = UserFollows.objects.filter(follower=request.user).values_list('followed_user', flat=True)
+    followed_users = User.objects.filter(pk__in=followed_users)
+    followers = UserFollows.objects.filter(followed_user=request.user).values_list('follower', flat=True)
+    followers = User.objects.filter(pk__in=followers)
+    context = {
+        'followers': followers,
+        'followed_users': followed_users,
+        'following': followed_users,
+    }
+    return render(request, 'reviews/followers.html', context)
+
 
 @login_required
 def posts_view(request):
@@ -193,16 +187,6 @@ def posts_view(request):
     posts = Ticket.objects.filter(author=user).prefetch_related('review_set').order_by('-created_at')
 
     return render(request, 'reviews/posts.html', {'posts': posts})
-
-
-@login_required
-def followers_view(request):
-    followed_users = UserFollows.objects.filter(follower=request.user).values_list('followed_user', flat=True)
-    followed_users = User.objects.filter(pk__in=followed_users)
-    context = {
-        'followed_users': followed_users,
-    }
-    return render(request, 'reviews/followers.html', context)
 
 
 @login_required

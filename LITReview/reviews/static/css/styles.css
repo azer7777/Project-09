@@ -146,4 +146,30 @@ nav a:hover {
 
 .create-review-link:hover {
   background-color: #e68a00; /* Change background color on hover */
-}  
+}
+
+.follower-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.follower-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.follower-info {
+  flex-grow: 1;
+}
+
+.follower-username {
+  font-weight: bold;
+}
+
+.follower-actions {
+  margin-left: 50px;
+}

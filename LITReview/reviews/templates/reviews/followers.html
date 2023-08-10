@@ -1,16 +1,50 @@
 {% extends 'base.html' %}
 
+
+
+
 {% block content %}
-  <h1>Your Followers</h1>
-  <ul>
+  <h2>You Are Following</h2>
+  <div class="messages">
+    {% if messages %}
+      <ul>
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  <ul class="follower-list">
     {% for user in followed_users %}
-      <li>
-        {{ user.username }}
-        <a href="{% url 'unfollow_user' user_id=user.id %}" class="edit-link">Unfollow</a>
+      <li class="follower-box">
+        <div class="follower-info">
+          <span class="follower-username">{{ user.username }}</span>
+          <span class="follower-actions">
+            <a href="{% url 'unfollow_user' user_id=user.id %}" class="btn btn-danger">Unfollow</a>
+          </span>
+        </div>
+        <div class="follower-type">You Are Following</div>
+      </li>
+    {% endfor %}
+  </ul>
+
+
+
+  <h2>Following You ({{ followers.count }})</h2>
+  <ul class="follower-list">
+    {% for user in followers %}
+      <li class="follower-box">
+        <div class="follower-info">
+          <span class="follower-username">{{ user.username }}</span>
+        </div>
+        <div class="follower-type">Following You</div>
       </li>
     {% endfor %}
   </ul>
 {% endblock %}
+
+
+
+
 
 
 
