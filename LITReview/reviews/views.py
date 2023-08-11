@@ -181,6 +181,18 @@ def unfollow_user(request, user_id):
 
 
 @login_required
+def block_follower(request, user_id):
+    try:
+        follower_to_block = UserFollows.objects.get(followed_user=request.user, follower__id=user_id)
+        follower_to_block.delete()
+        messages.success(request, f"You have blocked {follower_to_block.follower.username}.")
+    except UserFollows.DoesNotExist:
+        messages.error(request, "Follower not found.")
+    
+    return redirect('subscriptions')
+
+
+@login_required
 def posts_view(request):
     user = request.user
     posts = Ticket.objects.filter(author=user).prefetch_related(

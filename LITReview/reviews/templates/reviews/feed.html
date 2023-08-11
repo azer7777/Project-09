@@ -9,7 +9,7 @@
     <a href="{% url 'create_ticket_and_review' %}" class="btn btn-primary">Create Review</a>
   </div>
 
-  <!-- Display Feed Items -->
+ 
   <div class="feed-content">
     {% for item in feed %}
       <div class="feed-item">
@@ -17,7 +17,6 @@
         <p>{{ item.description }}</p>
         <p class="item-author">By: {{ item.author }} at: {{ item.created_at }}</p>
                
-        <!-- Display Reviews -->
         {% if item.review_set.exists %}
         <h3>Reviews:</h3>
         <ul class="review-list">

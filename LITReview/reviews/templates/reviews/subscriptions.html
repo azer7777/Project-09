@@ -43,6 +43,10 @@
     <li class="follower-box">
       <div class="follower-info">
         <span class="follower-username">{{ user.username }}</span>
+        <span class="follower-actions">
+          <a href="{% url 'unfollow_user' user_id=user.id %}" class="btn btn-danger">Unfollow</a>
+          <a href="{% url 'block_follower' user_id=user.id %}" class="btn btn-secondary">Block</a>
+        </span>
       </div>
       <div class="follower-type">Following You</div>
     </li>
