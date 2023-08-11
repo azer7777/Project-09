@@ -71,7 +71,7 @@ def create_review_view(request, ticket_id):
         if form.is_valid():
             review = form.save(commit=False)
             review.user = request.user
-            review.ticket = ticket  # Set the ticket for the review
+            review.ticket = ticket
             review.save()
             return redirect('feed')
     else:
