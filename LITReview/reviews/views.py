@@ -5,15 +5,16 @@ from .models import Ticket, Review, UserFollows
 from .forms import ReviewForm, TicketForm, FollowUserForm
 from django.contrib.auth.models import User
 from django.db.models import Q, Prefetch
+from django.utils import timezone
 
 @login_required
 def feed_view(request):
     user = request.user
     followed_users = user.following.values_list('followed_user', flat=True)
-    
+
     feed = Ticket.objects.filter(
         Q(author=user) | Q(author__in=followed_users) | Q(review__user=user)
-    ).distinct().order_by('-created_at')
+    ).distinct().order_by('-created_at', '-review__time_created', '-time_edited', '-review__time_edited')
 
     return render(request, 'reviews/feed.html', {'feed': feed})
 
@@ -88,6 +89,7 @@ def edit_review_view(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
+            review.time_edited = timezone.now()
             messages.success(request, "Review updated successfully.")
             return redirect('posts')
     else:
@@ -104,6 +106,7 @@ def edit_ticket_view(request, ticket_id):
         form = TicketForm(request.POST, instance=ticket)
         if form.is_valid():
             form.save()
+            ticket.time_edited = timezone.now()
             messages.success(request, "Ticket updated successfully.")
             return redirect('posts')
     else:
@@ -197,7 +200,7 @@ def posts_view(request):
     user = request.user
     posts = Ticket.objects.filter(author=user).prefetch_related(
         Prefetch('review_set', queryset=Review.objects.filter(user=user))
-    ).order_by('-created_at')
+    ).order_by('-created_at', '-review__time_created', '-time_edited', '-review__time_edited')
 
     return render(request, 'reviews/posts.html', {'posts': posts})
 

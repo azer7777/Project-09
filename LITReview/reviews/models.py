@@ -6,6 +6,7 @@ class Ticket(models.Model):
     description = models.TextField()
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    time_edited = models.DateTimeField(auto_now=True)
 
 class Review(models.Model):
     headline = models.CharField(max_length=200)
@@ -14,6 +15,7 @@ class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ticket = models.ForeignKey(Ticket, null=True, blank=True, on_delete=models.CASCADE)
     time_created = models.DateTimeField(auto_now_add=True)
+    time_edited = models.DateTimeField(auto_now=True)
 
 class UserFollows(models.Model):
     follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)
