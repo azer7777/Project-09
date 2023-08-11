@@ -4,7 +4,7 @@ from django.contrib import messages
 from .models import Ticket, Review, UserFollows
 from .forms import ReviewForm, TicketForm, FollowUserForm
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 
 @login_required
 def feed_view(request):
@@ -96,7 +96,6 @@ def edit_review_view(request, review_id):
     return render(request, 'reviews/edit_review.html', {'form': form, 'review': review})
 
 
-
 @login_required
 def edit_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, author=request.user)
@@ -134,7 +133,7 @@ def delete_review_view(request, review_id):
 
 
 @login_required
-def follow_user(request):
+def subscriptions_view(request):
     if request.method == 'POST':
         form = FollowUserForm(request.POST)
         if form.is_valid():
@@ -153,7 +152,21 @@ def follow_user(request):
                 messages.error(request, f"The user '{followed_username}' does not exist.")
     else:
         form = FollowUserForm()
-    return render(request, 'reviews/follow_user.html', {'form': form})
+
+    followed_users = UserFollows.objects.filter(follower=request.user).values_list('followed_user', flat=True)
+    followed_users = User.objects.filter(pk__in=followed_users)
+    followers = UserFollows.objects.filter(followed_user=request.user).values_list('follower', flat=True)
+    followers = User.objects.filter(pk__in=followers)
+
+    context = {
+        'followers': followers,
+        'followed_users': followed_users,
+        'following': followed_users,
+        'form': form,
+    }
+
+    return render(request, 'reviews/subscriptions.html', context)
+
 
 @login_required
 def unfollow_user(request, user_id):
@@ -164,27 +177,15 @@ def unfollow_user(request, user_id):
         messages.success(request, f"You have unfollowed {followed_user.username}.")
     except UserFollows.DoesNotExist:
         messages.error(request, f"You are not following {followed_user.username}.")
-    return redirect('followers')
-
-
-@login_required
-def followers_view(request):
-    followed_users = UserFollows.objects.filter(follower=request.user).values_list('followed_user', flat=True)
-    followed_users = User.objects.filter(pk__in=followed_users)
-    followers = UserFollows.objects.filter(followed_user=request.user).values_list('follower', flat=True)
-    followers = User.objects.filter(pk__in=followers)
-    context = {
-        'followers': followers,
-        'followed_users': followed_users,
-        'following': followed_users,
-    }
-    return render(request, 'reviews/followers.html', context)
+    return redirect('subscriptions')
 
 
 @login_required
 def posts_view(request):
     user = request.user
-    posts = Ticket.objects.filter(author=user).prefetch_related('review_set').order_by('-created_at')
+    posts = Ticket.objects.filter(author=user).prefetch_related(
+        Prefetch('review_set', queryset=Review.objects.filter(user=user))
+    ).order_by('-created_at')
 
     return render(request, 'reviews/posts.html', {'posts': posts})
 

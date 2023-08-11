@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card mt-5">
+        <div class="card-header">
+          <h2>Follow User</h2>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Follow</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>You Are Following</h2>
+<div class="messages">
+  <ul class="follower-list">
+    {% for user in followed_users %}
+      <li class="follower-box">
+        <div class="follower-info">
+          <span class="follower-username">{{ user.username }}</span>
+          <span class="follower-actions">
+            <a href="{% url 'unfollow_user' user_id=user.id %}" class="btn btn-danger">Unfollow</a>
+          </span>
+        </div>
+        <div class="follower-type">You Are Following</div>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<h2>Following You ({{ followers.count }})</h2>
+<ul class="follower-list">
+  {% for user in followers %}
+    <li class="follower-box">
+      <div class="follower-info">
+        <span class="follower-username">{{ user.username }}</span>
+      </div>
+      <div class="follower-type">Following You</div>
+    </li>
+  {% endfor %}
+</ul>
+
+<div class="messages-box position-fixed bottom-0 centered-boxes p-3">
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+  {% if messages %}
+    {% for message in messages %}
+      <h4 {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</h4>
+    {% endfor %}
+  {% endif %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
