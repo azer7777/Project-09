@@ -13,18 +13,20 @@
   <div class="feed-content">
     {% for item in feed %}
       <div class="feed-item">
+        <p>{{ item.author }} requested a review</p>
         <h3>{{ item.title }}</h3>
         <p>{{ item.description }}</p>
-        <p class="item-author">By: {{ item.author }} at: {{ item.created_at }}</p>
+        <p>{{ item.created_at }}</p>
                
         {% if item.review_set.exists %}
         <h3>Reviews:</h3>
         <ul class="review-list">
           {% for review in item.review_set.all %}
             <li class="review-item">
+              <p >{{ review.user }} posted a review</p>
               <strong class="review-headline">{{ review.headline }} - {{ review.rating }} stars</strong>
               <p class="review-body">{{ review.body }}</p>
-              <p class="review-author">By: {{ review.user }} at: {{ review.time_created }}</p>
+              <p>{{ review.time_created }}</p>
             </li>
           {% endfor %}
         </ul>

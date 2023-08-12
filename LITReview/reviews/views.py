@@ -7,18 +7,20 @@ from django.contrib.auth.models import User
 from django.db.models import Q, Prefetch
 from django.utils import timezone
 
+
 @login_required
 def feed_view(request):
     user = request.user
     followed_users = user.following.values_list('followed_user', flat=True)
+    fields = ['-created_at', '-review__time_created', '-time_edited', '-review__time_edited']
+    fields.sort(reverse=True)
+    print(fields[0])
 
     feed = Ticket.objects.filter(
         Q(author=user) | Q(author__in=followed_users) | Q(review__user=user)
-    ).distinct().order_by('-created_at', '-review__time_created', '-time_edited', '-review__time_edited')
+    ).distinct().order_by('-time_edited', '-review__time_edited')
 
     return render(request, 'reviews/feed.html', {'feed': feed})
-
-
 
 
 @login_required
@@ -29,7 +31,6 @@ def create_ticket_view(request):
             ticket = ticket_form.save(commit=False)
             ticket.author = request.user
             ticket.save()
-            messages.success(request, "Ticket created successfully.")
             return redirect('feed')
     else:
         ticket_form = TicketForm()
@@ -52,8 +53,6 @@ def create_ticket_and_review_view(request):
             review.user = request.user
             review.ticket = ticket
             review.save()
-
-            messages.success(request, "Ticket and Review created successfully.")
             return redirect('feed')
     else:
         ticket_form = TicketForm()
@@ -90,7 +89,6 @@ def edit_review_view(request, review_id):
         if form.is_valid():
             form.save()
             review.time_edited = timezone.now()
-            messages.success(request, "Review updated successfully.")
             return redirect('posts')
     else:
         form = ReviewForm(instance=review)
@@ -107,7 +105,6 @@ def edit_ticket_view(request, ticket_id):
         if form.is_valid():
             form.save()
             ticket.time_edited = timezone.now()
-            messages.success(request, "Ticket updated successfully.")
             return redirect('posts')
     else:
         form = TicketForm(instance=ticket)
@@ -120,7 +117,6 @@ def delete_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, author=request.user)
     if request.method == 'POST':
         ticket.delete()
-        messages.success(request, "Ticket deleted successfully.")
         return redirect('posts')
     return render(request, 'reviews/delete_ticket.html', {'ticket': ticket})
 
@@ -130,7 +126,6 @@ def delete_review_view(request, review_id):
     review = get_object_or_404(Review, id=review_id, user=request.user)
     if request.method == 'POST':
         review.delete()
-        messages.success(request, "Review deleted successfully.")
         return redirect('posts')
     return render(request, 'reviews/delete_review.html', {'review': review})
 
@@ -198,9 +193,11 @@ def block_follower(request, user_id):
 @login_required
 def posts_view(request):
     user = request.user
+    fields = ['-created_at', '-review__time_created', '-time_edited', '-review__time_edited']
+    fields.sort(reverse=True)
     posts = Ticket.objects.filter(author=user).prefetch_related(
         Prefetch('review_set', queryset=Review.objects.filter(user=user))
-    ).order_by('-created_at', '-review__time_created', '-time_edited', '-review__time_edited')
+    ).order_by(fields[0])
 
     return render(request, 'reviews/posts.html', {'posts': posts})
 
