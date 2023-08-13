@@ -12,13 +12,10 @@ from django.utils import timezone
 def feed_view(request):
     user = request.user
     followed_users = user.following.values_list('followed_user', flat=True)
-    fields = ['-created_at', '-review__time_created', '-time_edited', '-review__time_edited']
-    fields.sort(reverse=True)
-    print(fields[0])
 
     feed = Ticket.objects.filter(
         Q(author=user) | Q(author__in=followed_users) | Q(review__user=user)
-    ).distinct().order_by('-time_edited', '-review__time_edited')
+    ).distinct().order_by('-created_at', '-review__time_created', '-time_edited', '-review__time_edited')
 
     return render(request, 'reviews/feed.html', {'feed': feed})
 
