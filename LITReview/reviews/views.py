@@ -4,18 +4,20 @@ from django.contrib import messages
 from .models import Ticket, Review, UserFollows
 from .forms import ReviewForm, TicketForm, FollowUserForm
 from django.contrib.auth.models import User
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, F
 from django.utils import timezone
-
+from django.db.models.functions import Coalesce
 
 @login_required
 def feed_view(request):
     user = request.user
     followed_users = user.following.values_list('followed_user', flat=True)
-
+    
     feed = Ticket.objects.filter(
         Q(author=user) | Q(author__in=followed_users) | Q(review__user=user)
-    ).distinct().order_by('-created_at', '-review__time_created', '-time_edited', '-review__time_edited')
+    ).distinct().annotate(
+        combined_created_at=Coalesce('review__time_edited', F('created_at'))
+    ).order_by('-combined_created_at')
 
     return render(request, 'reviews/feed.html', {'feed': feed})
 
@@ -194,7 +196,9 @@ def posts_view(request):
     fields.sort(reverse=True)
     posts = Ticket.objects.filter(author=user).prefetch_related(
         Prefetch('review_set', queryset=Review.objects.filter(user=user))
-    ).order_by(fields[0])
+    ).annotate(
+        combined_created_at=Coalesce('review__time_edited', F('created_at'))
+    ).order_by('-combined_created_at')
 
     return render(request, 'reviews/posts.html', {'posts': posts})
 

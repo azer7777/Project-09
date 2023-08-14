@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 
+
 class Ticket(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -14,7 +15,7 @@ class Review(models.Model):
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ticket = models.ForeignKey(Ticket, null=True, blank=True, on_delete=models.CASCADE)
-    time_created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     time_edited = models.DateTimeField(auto_now=True)
 
 class UserFollows(models.Model):
