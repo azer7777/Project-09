@@ -2,15 +2,16 @@
 
 # LitReview
 
-LitReview is a web application that allows users to create, review, and interact with posts and reviews related to various topics. Users can follow each other, create posts, write reviews, and engage in discussions.
+LitReview is a web application that allows users to request reviews of books or articles, by creating a ticket,
+read reviews of books or articles, publish reviews of books or articles. Users can follow each other.
 
 ## Features
 
 - User registration and authentication
-- Create, edit, and delete posts
-- Write and edit reviews for posts
-- Follow other users and see their posts and reviews in the feed
-- View posts and reviews from followed users and own posts and reviews in the feed
+- Create, edit, and delete tickets
+- Write and edit reviews for tickets
+- Follow and unfollow other users and see their posts in the feed
+- View posts from followed users and own posts and reviews in the Feed and Posts
 - Block and unblock followers
 - Responsive and modern user interface
 
@@ -18,8 +19,7 @@ LitReview is a web application that allows users to create, review, and interact
 
 1. Clone the repository:
 ````
-git clone https://github.com/yourusername/LitReview.git
-````
+git clone https://github.com/azer7777/Project-09.git
 cd LitReview
 ````
 2. Create a virtual environment and activate it:
@@ -47,8 +47,8 @@ python manage.py runserver
 
 ##Usage
 Register a new account or log in.
-Explore the feed to see posts and reviews from users you follow.
-Create new posts and write reviews for existing posts.
-Edit and delete your posts and reviews.
+Explore the feed to see tickets and reviews from users you follow.
+Create new posts and write reviews for existing tickets.
+Edit and delete your tickets and reviews.
 Follow or block other users to manage your connections.
-Visit the admin panel at http://127.0.0.1:8000/admin/ to manage users, posts, and reviews.
+Visit the admin panel to manage users, tickets, and reviews.
