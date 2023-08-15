@@ -45,7 +45,7 @@ python manage.py runserver
 ````
 7. Access the application at `http://localhost:8000/`
 
-##Usage
+## Usage
 
 Register a new account or log in.
 Explore the feed to see tickets and reviews from users you follow.
