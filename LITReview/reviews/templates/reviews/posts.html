@@ -21,19 +21,23 @@
                       <p class="review-author">By: {{ review.user }} at: {{ review.time_created }}</p>
                       <a href="{% url 'edit_review' review_id=review.id %}" class="edit-link">Edit Review</a>
                     </li>
-                    <li class="post-box">
-                      <h3>Ticket:</h3>
-                      <h2>{{ post.title }}</h2>
-                      <p class="post-description">{{ post.description }}</p>
-                      <p class="post-author">By: {{ post.author }} at: {{ post.created_at }}</p>
-                    </li>
+                    {% if post.author == request.user %}
+                      <li class="post-box">
+                        <h3>Ticket:</h3>
+                        <h2>{{ post.title }}</h2>
+                        <p class="post-description">{{ post.description }}</p>
+                        <p class="post-author">By: {{ post.author }} at: {{ post.created_at }}</p>
+                      </li>
+                    {% endif %}
                   {% endfor %}
                 </ul>
               {% else %}
                 <p class="no-review">No review available.</p>
               {% endif %}
             </div>
-            <a href="{% url 'edit_ticket' post.id %}" class="edit-link">Edit Ticket</a>
+            {% if post.author == request.user %}
+              <a href="{% url 'edit_ticket' post.id %}" class="edit-link">Edit Ticket</a>
+            {% endif %}
             {% if not post.review_set.exists %}
               <a href="{% url 'create_review' ticket_id=post.id %}" class="create-review-link">Add Review</a>
             {% endif %}

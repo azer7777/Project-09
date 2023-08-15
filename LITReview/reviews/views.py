@@ -192,9 +192,7 @@ def block_follower(request, user_id):
 @login_required
 def posts_view(request):
     user = request.user
-    fields = ['-created_at', '-review__time_created', '-time_edited', '-review__time_edited']
-    fields.sort(reverse=True)
-    posts = Ticket.objects.filter(author=user).prefetch_related(
+    posts = Ticket.objects.filter(Q(author=user) | Q(review__user=user)).prefetch_related(
         Prefetch('review_set', queryset=Review.objects.filter(user=user))
     ).annotate(
         combined_created_at=Coalesce('review__time_edited', F('created_at'))
