@@ -5,26 +5,25 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['headline', 'rating', 'body']
-        labels = {
-            'headline': 'Title',
-            'body': 'Comment'
-        }
+        fields = ["headline", "rating", "body"]
+        labels = {"headline": "Title", "body": "Comment"}
+
 
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['title', 'description']
+        fields = ["title", "description"]
+
 
 class FollowUserForm(forms.Form):
-    followed_user = forms.CharField(label='Username')
+    followed_user = forms.CharField(label="Username")
+
 
 class SignUpForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
-
-
+        fields = ["username", "email", "password1", "password2"]
