@@ -20,7 +20,6 @@ read reviews of books or articles, publish reviews of books or articles. Users c
 1. Clone the repository:
 ````
 git clone https://github.com/azer7777/Project-09.git
-cd LitReview
 ````
 2. Create a virtual environment and activate it:
 ````
@@ -33,6 +32,7 @@ pip install -r requirements.txt
 ````
 4. Run migrations:
 ````
+cd LitReview
 python manage.py migrate
 ````
 5. Create a superuser to manage the admin panel:
