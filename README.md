@@ -24,7 +24,7 @@ git clone https://github.com/azer7777/Project-09.git
 2. Create a virtual environment and activate it:
 ````
 python3 -m venv venv 
-source venv/bin/activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ````
 3. Install dependencies:
 ````
